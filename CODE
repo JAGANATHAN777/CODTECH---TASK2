@@ -1,0 +1,81 @@
+#include <WiFi.h>
+#include <DHT.h>
+#include <Wire.h>
+#include <SoftwareSerial.h>
+#include <stdlib.h>
+#include <SFE_BMP180.h>
+ 
+
+//After this, enter the Wi-Fi name, password of your Wi-Fi router, and then also enter the API key that you copied from the ThingSpeak channel.
+
+#define ssid  "Enter Your WiFi Name Here "     // "WiFi Name"
+#define pass "WiFi Password"       // "Password"
+#define server = "api.thingspeak.com";
+String apiKey ="Enter the API Key";
+ 
+
+//In the void setup() function, it connects with the Wi-Fi and starts the BMP180 and DHT11 sensors.
+
+void setup() {                
+  Wire.begin();
+  pressure.begin();
+  // enable debug serial
+
+  Serial.begin(9600);
+       delay(10);
+       dht.begin();
+
+Serial.begin(9600); 
+  Serial.println("AT");
+  delay(5000);
+  if(Serial.find("OK")){
+    connectWiFi();
+ 
+
+//Using the void Transmission() function, we calculate the temperature, humidity, and pressure using the BMP180 and DHT11 sensors.
+
+void Trsmission()
+{
+  int8_t h = dht.readHumidity(); 
+  int16_t t = dht.readTemperature(TEMPTYPE); 
+  char status;
+  double T,P,p0,a;
+  status = pressure.startTemperature();
+  if (status != 0)
+  {
+    delay(status);
+    status = pressure.getTemperature(T);
+    if (status != 0)
+    {
+
+      status = pressure.startPressure(3);
+      if (status != 0)
+      {
+        // Wait for the measurement to complete:
+        delay(status);
+………………………………………………………………..
+………………………………………………………………..
+ 
+
+//These commands are used to connect with the ThingSpeak server and then print the temperature, humidity, and pressure values in different fields.
+
+String cmd = "AT+CIPSTART=\"TCP\",\"";
+  cmd += "184.106.153.149"; // api.thingspeak.com
+  cmd += "\",80";
+  ser.println(cmd);
+
+ if(ser.find("Error")){
+    Serial.println("AT+CIPSTART error");
+    return;
+…………………………………….  
+
+  // prepare GET string
+  String getStr = "GET /update?api_key=";
+  getStr += apiKey;
+  getStr +="&field1=";
+  getStr += String(strTemp);
+  getStr +="&field2=";
+  getStr += String(strHumid);
+  getStr +="&field3=";
+  getStr += String(strPres);
+  getStr += "\r\n\r\n";
